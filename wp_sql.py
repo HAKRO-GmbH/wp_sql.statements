@@ -39,3 +39,28 @@ class wp_sql():
         c.execute(sql)
         d = c.fetchone()
         return(d)
+    
+    def filter_categories(self):
+        conn = makecon()
+        c = conn.cursor()
+        sql = ''' SELECT DISTINCT 
+                    post_title 
+                    , post_content
+                    , ID  
+                    ,(SELECT group_concat(wpw4_terms.name separator ', ') 
+                        FROM wpw4_terms 
+                        INNER JOIN wpw4_term_taxonomy on wpw4_terms.term_id = wpw4_term_taxonomy.term_id 
+                        INNER JOIN wpw4_term_relationships wpr on wpr.term_taxonomy_id = wpw4_term_taxonomy.term_taxonomy_id 
+                        WHERE taxonomy= 'category' and wpw4_posts.ID = wpr.object_id 
+                    ) AS "Categories" 
+                    ,(SELECT group_concat(wpw4_terms.name separator ', ') 
+                        FROM wpw4_terms 
+                        INNER JOIN wpw4_term_taxonomy on wpw4_terms.term_id = wpw4_term_taxonomy.term_id 
+                        INNER JOIN wpw4_term_relationships wpr on wpr.term_taxonomy_id = wpw4_term_taxonomy.term_taxonomy_id 
+                        WHERE taxonomy= 'post_tag' and wpw4_posts.ID = wpr.object_id 
+                    ) AS "Tags" 
+                    FROM wpw4_posts 
+                    WHERE post_type = 'post' AND post_status = 'publish' '''
+        c.execute(sql)
+        d = c.fetchall()
+        return(d)
