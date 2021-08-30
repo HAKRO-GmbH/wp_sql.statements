@@ -69,3 +69,6 @@ class wp_sql():
         c.execute(sql)
         d = c.fetchall()
         return(d)
+
+        def set_post(data):
+            pass

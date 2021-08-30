@@ -2,6 +2,7 @@
 Einstiegspunkt für eine generelle Test-App/Script
 '''
 from wp_sql import wp_sql
+import daily
 
 def main():
     sql = wp_sql('nadine', 'hakro1969', '10.69.30.123', 'wp860') #Instanz für __init__ // hier heißt self dann sql
@@ -9,19 +10,11 @@ def main():
     statement_2 = sql.count_user1() #deine Funktion von mir eingebunden
     print(statement_1, statement_2) #Beispiel von tue was damit
 
-    '''
-    Wir könnten z.B. einen 2ten SQL Server instanzieren und unsere Daten verwenden --> mit der gleichen Klasse
+    df = daily.get_df("Del_today_28.08.2021-4_35_20.xlsx")
+    print(df.shape)
 
-    sql2 = wp.sql('testuser', 'supersicher', '10.69.30.124, 'wp861') #Instanz für __init__ // hier heißt self dann sql2
-    statement_3 = sql.count_user() #deine Funktion von mir eingebunden
-    statement_4 = sql.count_user1() #deine Funktion von mir eingebunden
-    print(statement_3, statement_4) #Beispiel von tue was damit
-
-    Somit haben wir Zeit gespart und haben Funktionen die wir nur einmal anfassen müssen - dementsprechend hoch kann die Qualität werden
-
-    Grüßle
-    Carlos
-    '''
+    x = daily.get_sum(df)
+    print(x)
 
 
 
