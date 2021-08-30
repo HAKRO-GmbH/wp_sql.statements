@@ -7,8 +7,12 @@ class wp_sql():
         self.password = password
         self.server = server
         self.db = db
+        self.conn = mysql.connector.connect(user=self.user, password=self.password,
+                                            host=self.server,
+                                            database=self.db)
 
-    def makecon(self): #Hier holen wir uns die global verfügbaren Variablen und die Funktion returned nur das Verbindungs-Objekt // dont repeat yourself - faul sein :)
+    ''' 
+        def makecon(self): #Hier holen wir uns die global verfügbaren Variablen und die Funktion returned nur das Verbindungs-Objekt // dont repeat yourself - faul sein :)
         try: #Schritt 1 - Try
             conn = mysql.connector.connect(user=self.user, password=self.password,
                                             host=self.server,
@@ -23,9 +27,10 @@ class wp_sql():
         
         finally: #Schlussendlich mache das - in diesem Fall: nichts 
             pass
+    '''
 
     def count_user(self): #self ist hier wieder die Instanz aus main.py
-        conn = makecon()
+        conn = self.conn
         c = conn.cursor()
         sql = ''' SELECT COUNT(ID) AS AnzahlUser FROM `wpw4_users` '''
         c.execute(sql)
@@ -33,7 +38,7 @@ class wp_sql():
         return(d)
 
     def count_user1(self):
-        conn = makecon()
+        conn = self.conn
         c = conn.cursor()
         sql = ''' SELECT COUNT(*) FROM `wpw4_users` '''
         c.execute(sql)
