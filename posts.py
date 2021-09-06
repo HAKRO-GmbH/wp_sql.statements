@@ -29,7 +29,7 @@ def gen_data():
        'post_status' : 'publish',
        'comment_status' : 'open',
        'ping_status' : 'open',
-       'post_passwort' : '',
+       'post_password' : '',
        'post_name' : post_title.replace(' ', '_'),
        'to_ping' : '',
        'pinged' : '',
@@ -45,8 +45,12 @@ def gen_data():
     }
     return data
 
+
 def main():
-    print(gen_data())
+    for i in range(1000):
+        sql = wp_sql(c.user, c.password, c.server, c.db, c.tprefix)
+        res = sql.set_post(gen_data())
+        print(res)
 
 if __name__ == "__main__":
     main()

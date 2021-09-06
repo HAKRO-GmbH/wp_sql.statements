@@ -43,7 +43,7 @@ class wp_sql():
         sql = ''' SELECT COUNT(ID) AS AnzahlUser FROM `wpw4_users` '''
         c.execute(sql)
         d = c.fetchall() 
-        return(d)
+        return d
 
     def count_user1(self):
         conn = self.conn
@@ -51,7 +51,7 @@ class wp_sql():
         sql = ''' SELECT COUNT(*) FROM `wpw4_users` '''
         c.execute(sql)
         d = c.fetchone()
-        return(d)
+        return d
     
     def filter_categories(self):
         conn = self.conn
@@ -78,5 +78,18 @@ class wp_sql():
         d = c.fetchall()
         return(d)
 
-        def set_post(data):
+    def set_post(self, data):
+        try:
+            conn = self.conn
+            c = conn.cursor()
+            placeholder = ", ".join(["%s"] * len(data))
+            sql = "insert into `{table}` ({columns}) values ({values});".format(table='wpmj_posts', columns=",".join(data.keys()), values=placeholder)
+            c.execute(sql, list(data.values()))
+            conn.commit()
+            conn.close()
+            return 0
+        except Exception as e:
+            print(f'Fehler: {e}')
+            return 1
+        finally:
             pass
