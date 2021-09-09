@@ -2,11 +2,12 @@ import mysql.connector
 
 class wp_sql():
 
-    def __init__(self, user, password, server, db) -> None: #Jede Klasse benötigt in der Regel eine init-Funktion um Variablen global in der Klasse verfügbar zu machen
+    def __init__(self, user, password, server, db, tprefix) -> None: #Jede Klasse benötigt in der Regel eine init-Funktion um Variablen global in der Klasse verfügbar zu machen
         self.user = user #In der main.py habe ich die erste Instanz mit sql initialisiert und an der Stelle den User 'nadine' übergeben. Self steht für die Instanz
         self.password = password
         self.server = server
         self.db = db
+        self.tprefix=tprefix
         self.conn = mysql.connector.connect(user=self.user, password=self.password,
                                             host=self.server,
                                             database=self.db)
@@ -28,6 +29,13 @@ class wp_sql():
         finally: #Schlussendlich mache das - in diesem Fall: nichts 
             pass
     '''
+    def get_max_post_id(self): #self ist hier wieder die Instanz aus main.py
+        conn = self.conn
+        c = conn.cursor()
+        sql = f'SELECT MAX(ID) FROM {self.tprefix}posts'
+        c.execute(sql)
+        d = c.fetchall() 
+        return d[0][0]
 
     def count_user(self): #self ist hier wieder die Instanz aus main.py
         conn = self.conn
@@ -35,7 +43,7 @@ class wp_sql():
         sql = ''' SELECT COUNT(ID) AS AnzahlUser FROM `wpw4_users` '''
         c.execute(sql)
         d = c.fetchall() 
-        return(d)
+        return d
 
     def count_user1(self):
         conn = self.conn
@@ -43,7 +51,7 @@ class wp_sql():
         sql = ''' SELECT COUNT(*) FROM `wpw4_users` '''
         c.execute(sql)
         d = c.fetchone()
-        return(d)
+        return d
     
     def filter_categories(self):
         conn = self.conn
@@ -70,5 +78,18 @@ class wp_sql():
         d = c.fetchall()
         return(d)
 
-        def set_post(data):
+    def set_post(self, data):
+        try:
+            conn = self.conn
+            c = conn.cursor()
+            placeholder = ", ".join(["%s"] * len(data))
+            sql = "insert into `{table}` ({columns}) values ({values});".format(table='wpmj_posts', columns=",".join(data.keys()), values=placeholder)
+            c.execute(sql, list(data.values()))
+            conn.commit()
+            conn.close()
+            return 0
+        except Exception as e:
+            print(f'Fehler: {e}')
+            return 1
+        finally:
             pass
