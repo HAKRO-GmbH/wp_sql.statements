@@ -1,10 +1,12 @@
-import os, requests, time
+import os, requests, time, sys
 from config import Config as c
 import numpy as np
 import mysql.connector
 
 from datetime import datetime
 from wp_sql import wp_sql
+
+#p = sys.argv[1]
 
 def gen_content():
     time.sleep(0.1)
@@ -16,6 +18,7 @@ def gen_content():
 def gen_data():
     sql = wp_sql(c.user, c.password, c.server, c.db, c.tprefix)
     post_id = int(sql.get_max_post_id() + 1)
+    sql.assign_category(post_id)
     post_title = f'This is HAKRO Intranet-Post #{post_id}'
     now  = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     data = {
@@ -37,12 +40,13 @@ def gen_data():
        'post_modified_gmt' : now,
        'post_content_filtered' : '',
        'post_parent' : 0,
-       'guid' : f'http://10.69.30.123/wp-keven/?p={post_id}',
+       'guid' : f'http://10.69.30.123/wp/?p={post_id}',
        'menu_order' : 0,
        'post_type' : 'post',
        'post_mime_type' : '',
        'comment_count' : 0
     }
+
     return data
 
 
@@ -50,7 +54,8 @@ def main():
     for i in range(1000):
         sql = wp_sql(c.user, c.password, c.server, c.db, c.tprefix)
         res = sql.set_post(gen_data())
-        print(res)
+        #x = sql.assign_category(res['ID'])
+        print(gen_data())
 
 if __name__ == "__main__":
     main()

@@ -83,13 +83,24 @@ class wp_sql():
             conn = self.conn
             c = conn.cursor()
             placeholder = ", ".join(["%s"] * len(data))
-            sql = "insert into `{table}` ({columns}) values ({values});".format(table='wpmj_posts', columns=",".join(data.keys()), values=placeholder)
+            sql = "insert into `{table}` ({columns}) values ({values});".format(table='wpw4_posts', columns=",".join(data.keys()), values=placeholder)
             c.execute(sql, list(data.values()))
             conn.commit()
             conn.close()
-            return 0
+            return 'Post OK'
         except Exception as e:
             print(f'Fehler: {e}')
             return 1
         finally:
             pass
+
+
+    def assign_category(self, post_id):
+        conn = self.conn
+        post_id = (post_id, )
+        c = conn.cursor()
+        sql = '''INSERT INTO wp860.wpw4_term_relationships(object_id, term_taxonomy_id, term_order) VALUES (%s, 94, 0);'''
+        c.execute(sql, post_id)
+        conn.commit()
+        conn.close()
+        return 0
