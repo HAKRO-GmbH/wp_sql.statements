@@ -7,4 +7,5 @@ def get_df(filename):
     return df
 
 def get_sum(df):
+    print("Hello")
     return df.Quantity.sum()
