@@ -2,6 +2,7 @@ import os, requests, time, sys
 from config import Config as c
 import numpy as np
 import mysql.connector
+import daily
 
 from datetime import datetime
 from wp_sql import wp_sql
@@ -15,10 +16,16 @@ def gen_content():
     return x.text
 
 
+def gen_content_sales():    #nimmt die Zahl der versandten Artikel aus der daily.py und ertsellt content.                            
+    quantitySum = daily.get_quantity_sales()
+    text = f"Liebes HAKRO Team, heute haben wir {quantitySum} Artikel versandt."
+    return text
+
+
 def gen_data():
     sql = wp_sql(c.user, c.password, c.server, c.db, c.tprefix)
     post_id = int(sql.get_max_post_id() + 1)
-    sql.assign_category(post_id)
+    sql.assign_category(post_id)  #leider funktioniert das mit der Kategoriezuweisung nicht mehr, man sieht es in der Datenbank aber nicht im Intranet.
     post_title = f'This is HAKRO Intranet-Post #{post_id}'
     now  = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     data = {
@@ -26,7 +33,7 @@ def gen_data():
        'post_author' : 8,
        'post_date' : now,
        'post_date_gmt' : now,
-       'post_content' : str(gen_content()),
+       'post_content' : str(gen_content_sales()), #text aus der gen_content_sales
        'post_title' : post_title,
        'post_excerpt' : '',
        'post_status' : 'publish',
